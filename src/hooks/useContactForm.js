@@ -12,18 +12,44 @@ const initialFormData = {
 
 function useContactForm() {
   const [formData, setFormData] = useState(initialFormData)
+  const [enviando, setEnviando] = useState(false)
+  const [mensajeEstado, setMensajeEstado] = useState('')
 
   const handleChange = (event) => {
     const { name, value } = event.target
     const nextFormData = { ...formData, [name]: value }
 
     setFormData(nextFormData)
-    console.log('Cambio en input:', { name, value, formData: nextFormData })
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    console.log('Datos enviados:', formData)
+    setEnviando(true)
+    setMensajeEstado('')
+
+    try {
+      const respuesta = await fetch('http://127.0.0.1:3000/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await respuesta.json()
+
+      if (respuesta.ok) {
+        alert('¡Mensaje enviado con éxito!')
+        setFormData(initialFormData) // Limpia el formulario
+      } else {
+        alert(data.error || 'Ocurrió un error al enviar el mensaje.')
+      }
+    } catch (error) {
+      console.error('Error al conectar con el servidor:', error)
+      alert('No se pudo conectar con el servidor.')
+    } finally {
+      setEnviando(false)
+    }
   }
 
   const handleReset = () => {
@@ -33,6 +59,8 @@ function useContactForm() {
 
   return {
     formData,
+    enviando,
+    mensajeEstado,
     handleChange,
     handleReset,
     handleSubmit,

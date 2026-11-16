@@ -24,6 +24,13 @@ function Navbar() {
             </li>
           ))}
           <li>
+            <NavLink to="/login" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+             <i className="fa-solid fa-user" aria-hidden="true" />
+              <span>Login</span>
+            </NavLink>
+          </li>
+
+          <li>
             <a href="#final">
               <i className="fa-solid fa-arrow-down" aria-hidden="true" />
               <span>Ir al final</span>
